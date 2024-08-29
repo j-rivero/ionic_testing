@@ -17,19 +17,32 @@ docker build --target=ionic-nightly -t ionic-prerelease - < Dockerfile
 ## Running the images with GPU support
 
 To run the ionic-prerelease image created the recommended tool is `rocker`:
-https://github.com/osrf/rocker . Follow its install instructions and for the
-nvidia users run:
+https://github.com/osrf/rocker .
 
-### Nvidia users
+
+### Install rocker
+
+The `master` branch is needed to support Ubuntu Noble systems:
+```
+ python3 -m venv rocker_ws/
+ . rocker_ws/bin/activate
+ pip3 install git+https://github.com/osrf/rocker@master
+```
+
+### Launch the ionic image: Nvidia users
 
 ```
 rocker --user --x11 --nvidia -- ionic-prerelease
+# User should be now inside the Noble system with Ionic installed
+# to launch the simulator: gz sim --verbose
 ```
 
-### Intel users
+### Launch the ionic image: Intel users
 
 ```
 rocker --user --x11 --devices /dev/dri --group-add video  -- ionic-prerelease
+# User should be now inside the Noble system with Ionic installed
+# to launch the simulator: gz sim --verbose
 ```
 
 ## Using the nightly packages
