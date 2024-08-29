@@ -10,19 +10,13 @@ RUN git clone https://github.com/gazebo-tooling/gzdev \
     && cd gzdev \
     && python3 gzdev.py repository enable osrf stable \
     && python3 gzdev.py repository enable osrf prerelease 
-# TODO: enable when prerelease is ready
-# RUN apt-get install -y gz-ionic \
-#     && apt-get clean \
-#     && rm -rf /var/lib/apt/lists/*
+RUN apt-get install -y gz-ionic \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 FROM ionic-prerelease AS ionic-nightly
 RUN cd gzdev \
     && python3 gzdev.py repository enable osrf nightly
-# TODO: remove when gz-ionic is in the prerelease repository
-RUN apt-get install -y gz-ionic \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-# TODO: end of block
 RUN apt-get dist-upgrade -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
