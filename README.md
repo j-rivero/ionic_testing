@@ -20,7 +20,7 @@ To run the ionic-prerelease image created the recommended tool is `rocker`:
 https://github.com/osrf/rocker .
 
 
-### Install rocker
+### Installing rocker
 
 The `master` branch is needed to support Ubuntu Noble systems:
 ```
@@ -29,7 +29,10 @@ The `master` branch is needed to support Ubuntu Noble systems:
  pip3 install git+https://github.com/osrf/rocker@master
 ```
 
-### Launch the ionic image: Nvidia users
+Be sure of using the same shell to launch rocker from it or run the activate
+command in the desired shell.
+
+### Launching the ionic image: Nvidia users
 
 ```
 rocker --user --x11 --nvidia -- ionic-prerelease
@@ -37,7 +40,7 @@ rocker --user --x11 --nvidia -- ionic-prerelease
 # to launch the simulator: gz sim --verbose
 ```
 
-### Launch the ionic image: Intel users
+### Launching the ionic image: Intel users
 
 ```
 rocker --user --x11 --devices /dev/dri --group-add video  -- ionic-prerelease
