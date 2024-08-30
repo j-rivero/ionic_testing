@@ -1,6 +1,6 @@
 FROM ubuntu:noble AS ionic-prerelease
-ENV LANG C
-ENV LC_ALL C
+ENV LANG=C
+ENV LC_ALL=C
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update \
     && apt-get install -y dirmngr git python3 python3-docopt python3-yaml python3-distro \
