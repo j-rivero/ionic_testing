@@ -1,13 +1,12 @@
 services:
   ionic-build:
-    image: ionic/prerelease
+    image: ionic/${BUILD_TYPE:-prerelease}
     build:
       context: .
       dockerfile: Dockerfile
-      target:
-        ionic-prerelease
+      target: ionic-${BUILD_TYPE:-prerelease}
   ionic-intel-run:
-    image: ionic/prerelease
+    image: ionic/${BUILD_TYPE:-prerelease}
     stdin_open: true 
     tty: true
     user: ubuntu
@@ -24,7 +23,7 @@ services:
         - /dev/log:/dev/log:ro
         - /run/log:/run/log:ro
   ionic-nvidia-run:
-    image: ionic/prerelease
+    image: ionic/${BUILD_TYPE:-prerelease}
     stdin_open: true 
     tty: true
     user: ubuntu
