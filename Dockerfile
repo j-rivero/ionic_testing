@@ -3,7 +3,7 @@ ENV LANG C
 ENV LC_ALL C
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update \
-    && apt-get install -y dirmngr git python3 python3-docopt python3-yaml python3-distro \
+    && apt-get install -y dirmngr git python3 python3-docopt python3-yaml python3-distro sudo mesa-utils \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 RUN git clone https://github.com/gazebo-tooling/gzdev \
