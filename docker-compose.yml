@@ -5,6 +5,13 @@ services:
       context: .
       dockerfile: Dockerfile
       target: ionic-${BUILD_TYPE:-prerelease}
+  ionic-build-nvidia:
+    image: ionic/${BUILD_TYPE:-prerelease}-nvidia
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: ionic-${BUILD_TYPE:-prerelease}-nvidia
+
   ionic-intel-run:
     image: ionic/${BUILD_TYPE:-prerelease}
     stdin_open: true 
@@ -23,7 +30,7 @@ services:
         - /dev/log:/dev/log:ro
         - /run/log:/run/log:ro
   ionic-nvidia-run:
-    image: ionic/${BUILD_TYPE:-prerelease}
+    image: ionic/${BUILD_TYPE:-prerelease}-nvidia
     stdin_open: true 
     tty: true
     user: ubuntu
