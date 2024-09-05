@@ -3,7 +3,7 @@ ENV LANG C
 ENV LC_ALL C
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update \
-    && apt-get install -y dirmngr git python3 python3-docopt python3-yaml python3-distro sudo mesa-utils \
+    && apt-get install -y dirmngr curl git python3 python3-docopt python3-yaml python3-distro sudo mesa-utils \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 RUN git clone https://github.com/gazebo-tooling/gzdev \
@@ -20,3 +20,29 @@ RUN cd gzdev \
 RUN apt-get dist-upgrade -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+FROM ionic-prerelease AS ionic-prerelease-rolling
+RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
+RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | tee /etc/apt/sources.list.d/ros2.list > /dev/null
+RUN apt-get update \
+    && apt-get install -y ros-dev-tools ros-rolling-ros-base \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+RUN rosdep init
+USER ubuntu
+WORKDIR /home/ubuntu
+RUN mkdir -p ws/src
+WORKDIR /home/ubuntu/ws/src
+RUN vcs import --input https://raw.githubusercontent.com/gazebo-tooling/gz_vendor/main/gz_vendor.repos
+RUN git clone https://github.com/gazebosim/ros_gz
+RUN git clone https://github.com/ros-controls/gz_ros2_control
+USER root
+RUN rosdep update
+RUN apt-get update \
+    && rosdep install --from-paths . --ignore-src -r --rosdistro rolling -y \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+USER ubuntu
+WORKDIR /home/ubuntu/ws
+RUN . /opt/ros/rolling/setup.sh \
+      && MAKEFLAGS=-j6 colcon build
