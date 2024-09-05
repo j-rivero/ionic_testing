@@ -17,7 +17,7 @@ the necessary packages from the prerelease repository to run Gazebo Ionic.
 
 Build it with:
 ```
-docker build --target=ionic-nightly -t ionic-prerelease - < Dockerfile
+docker build --target=ionic-prerelease -t ionic-prerelease - < Dockerfile
 ```
 
 ### Running the images with GPU support
