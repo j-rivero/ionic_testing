@@ -1,0 +1,53 @@
+services:
+  ionic-build:
+    image: ionic/${BUILD_TYPE:-prerelease}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: ionic-${BUILD_TYPE:-prerelease}
+  ionic-build-nvidia:
+    image: ionic/${BUILD_TYPE:-prerelease}-nvidia
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: ionic-${BUILD_TYPE:-prerelease}-nvidia
+
+  ionic-intel-run:
+    image: ionic/${BUILD_TYPE:-prerelease}
+    stdin_open: true 
+    tty: true
+    user: ubuntu
+    group_add:
+      - video
+    devices:
+      - /dev/dri
+    environment:
+      - DISPLAY=unix${DISPLAY}
+      - TERM=xterm-256color
+    volumes:
+        - /sys:/sys:ro
+        - /tmp/.X11-unix:/tmp/.X11-unix:rw
+        - /dev/log:/dev/log:ro
+        - /run/log:/run/log:ro
+  ionic-nvidia-run:
+    image: ionic/${BUILD_TYPE:-prerelease}-nvidia
+    stdin_open: true 
+    tty: true
+    user: ubuntu
+    group_add:
+      - video
+    environment:
+      - DISPLAY=unix${DISPLAY}
+      - TERM=xterm-256color
+    volumes:
+        - /sys:/sys:ro
+        - /tmp/.X11-unix:/tmp/.X11-unix:rw
+        - /dev/log:/dev/log:ro
+        - /run/log:/run/log:ro
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
