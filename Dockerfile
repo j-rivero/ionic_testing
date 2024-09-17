@@ -21,28 +21,27 @@ RUN apt-get dist-upgrade -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-FROM ionic-prerelease AS ionic-prerelease-rolling
+FROM ionic-prerelease AS ionic-turtlebot4
+ENV ROS_DISTRO jazzy
 RUN cd gzdev \
     && python3 gzdev.py repository enable ros2 main
 RUN apt-get update \
-    && apt-get install -y ros-dev-tools ros-rolling-ros-base \
+    && apt-get install -y ros-dev-tools ros-${ROS_DISTRO}-ros-base \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 RUN rosdep init
+RUN echo "ubuntu ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers
+RUN apt-get update  # ready for rosdep
 USER ubuntu
 WORKDIR /home/ubuntu
 RUN mkdir -p ws/src
 WORKDIR /home/ubuntu/ws/src
-RUN vcs import --input https://raw.githubusercontent.com/gazebo-tooling/gz_vendor/main/gz_vendor.repos
-RUN git clone https://github.com/gazebosim/ros_gz
-RUN git clone https://github.com/ros-controls/gz_ros2_control
-USER root
-RUN rosdep update
-RUN apt-get update \
-    && rosdep install --from-paths . --ignore-src -r --rosdistro rolling -y \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-USER ubuntu
+RUN git clone https://github.com/turtlebot/turtlebot4 -b jazzy
+RUN git clone https://github.com/turtlebot/turtlebot4_simulator.git -b jazzy
+RUN git clone https://github.com/iRobotEducation/create3_sim -b jazzy
+RUN git clone https://github.com/turtlebot/turtlebot4_desktop.git -b jazzy
+RUN rosdep update \
+    && rosdep install --from-paths . --ignore-src -r --rosdistro ${ROS_DISTRO} -y
 WORKDIR /home/ubuntu/ws
-RUN . /opt/ros/rolling/setup.sh \
+RUN . /opt/ros/${ROS_DISTRO}/setup.sh \
       && MAKEFLAGS=-j6 colcon build
