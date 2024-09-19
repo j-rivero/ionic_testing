@@ -37,11 +37,20 @@ WORKDIR /home/ubuntu
 RUN mkdir -p ws/src
 WORKDIR /home/ubuntu/ws/src
 RUN git clone https://github.com/turtlebot/turtlebot4 -b jazzy
-RUN git clone https://github.com/turtlebot/turtlebot4_simulator.git -b jazzy
-RUN git clone https://github.com/iRobotEducation/create3_sim -b jazzy
+RUN git clone https://github.com/j-rivero/turtlebot4_simulator.git -b jazzy
+RUN git clone https://github.com/j-rivero/create3_sim -b jazzy
 RUN git clone https://github.com/turtlebot/turtlebot4_desktop.git -b jazzy
+RUN git clone https://github.com/gazebosim/ros_gz.git -b ros2
+RUN curl https://gist.githubusercontent.com/azeey/a94adb591475ea0e613313d3540ca451/raw/2bb0a92f327816279514aca9ff4079a5d523f7aa/gz_vendor.repos -o gz_vendor.repos
+RUN vcs import . < gz_vendor.repos
+RUN colcon list
+ENV GZ_RELAX_VERSION_MATCH 1
 RUN rosdep update \
-    && rosdep install --from-paths . --ignore-src -r --rosdistro ${ROS_DISTRO} -y
+   && rosdep install --from-paths . --ignore-src -r --rosdistro ${ROS_DISTRO} -y
+# Remove vendor packages (Harmonic)
+RUN sudo apt-get remove ros-jazzy-gz-*-vendor
+# Workaround for https://github.com/gazebosim/gz-msgs/issues/46# Workaround for https://github.com/gazebosim/gz-msgs/issues/463
+RUN sudo sed -i -e 's:PROTOBUF_DEPRECATED_ENUM::' /usr/include/gz/msgs11/gz/msgs/details/spherical_coordinates.pb.h
 WORKDIR /home/ubuntu/ws
 RUN . /opt/ros/${ROS_DISTRO}/setup.sh \
-      && MAKEFLAGS=-j6 colcon build
+     && MAKEFLAGS=-j6 colcon build
