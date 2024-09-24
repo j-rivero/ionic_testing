@@ -1,0 +1,21 @@
+name: "Testing GitHub action"
+on:
+  push:
+jobs:
+    test_gazebo:
+        runs-on: ubuntu-latest
+        container:
+          image: ubuntu:noble
+        steps:
+          - uses: actions/checkout@v4
+          - uses: actions/setup-node@v4.0.2
+            with:
+              node-version: '20.x'
+          - name: 'Check Gazebo installation on Ubuntu runner'
+            uses: gazebo-tooling/setup-gazebo@v0.2.0
+            with:
+              required-gazebo-distributions: 'ionic'
+              use-gazebo-prerelease: 'true'
+              use-gazebo-nightly: 'true'
+          - name: 'Test Gazebo installation'
+            run: 'gz sim --versions'
